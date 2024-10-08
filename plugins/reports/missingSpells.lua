@@ -1,6 +1,7 @@
 local mq = require("mq")
 local logger = require('knightlinc/Write')
 local broadcast = require('broadcast/broadcast')
+local binder = require('application/binder')
 
 local classSpells = {
     WAR = {
@@ -2597,7 +2598,7 @@ local function create(commandQueue)
         commandQueue.Enqueue(function() execute(onlyExpac) end)
     end
 
-    mq.bind("/fmspells", createCommand)
+    binder.Bind("/fmspells", createCommand, "Tells all bots to report their missing spells ('expansion' optional if you want to only check the given expansion).", 'expansion')
 end
 
 return create

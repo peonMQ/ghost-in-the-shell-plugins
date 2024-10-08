@@ -1,6 +1,7 @@
 local mq = require("mq")
 local logger = require('knightlinc/Write')
 local broadCastInterfaceFactory = require("broadcast/broadcastinterface")
+local binder = require('application/binder')
 local bci = broadCastInterfaceFactory('ACTOR')
 
 -- form bots in a circle around orchestrator
@@ -41,7 +42,7 @@ local function create(commandQueue)
         commandQueue.Enqueue(function() execute({Distance = tonumber(distance) or 20}) end)
     end
 
-    mq.bind("/circleme", createCommand)
+    binder.Bind("/circleme", createCommand, "Tells all bots to circle you with a given 'radius'.", 'radius')
 end
 
 return create

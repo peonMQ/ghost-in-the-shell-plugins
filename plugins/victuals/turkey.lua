@@ -1,6 +1,7 @@
 local mq = require('mq')
 local logger = require('knightlinc/Write')
 local mqUtils = require('utils/mqhelpers')
+local binder = require('application/binder')
 
 local foodItemClicky  = "Endless Turkeys"
 local foodItem  = "Cooked Turkey"

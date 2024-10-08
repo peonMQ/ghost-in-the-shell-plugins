@@ -1,6 +1,7 @@
 local mq = require('mq')
 local logger = require('knightlinc/Write')
 local broadcast = require('broadcast/broadcast')
+local binder = require('application/binder')
 
 local maxInventorySlots = 22 + mq.TLO.Me.NumBagSlots()
 local maxBankSlots = mq.TLO.Inventory.Bank.BagSlots()
@@ -126,7 +127,7 @@ local function create(commandQueue)
     end
   end
 
-   mq.bind("/fmi", createCommand)
+   binder.Bind("/fmi", createCommand, "Tells all bots to report missing item for given id or name.", 'id|name')
 end
 
 return create

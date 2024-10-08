@@ -2,6 +2,7 @@ local mq = require("mq")
 local broadcast = require('broadcast/broadcast')
 local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
+local binder = require('application/binder')
 
 local bci = broadCastInterfaceFactory('ACTOR')
 
@@ -27,7 +28,7 @@ local function create(commandQueue)
         commandQueue.Enqueue(function() execute() end)
     end
 
-    mq.bind("/weight", createCommand)
+    binder.Bind("/weight", createCommand, "Tells all bots to report their weight status.")
 end
 
 return create

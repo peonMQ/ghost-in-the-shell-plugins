@@ -2,6 +2,7 @@ local mq = require("mq")
 local broadCast = require('broadcast/broadcast')
 local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
+local binder = require('application/binder')
 
 local bci = broadCastInterfaceFactory('ACTOR')
 
@@ -14,9 +15,9 @@ local function execute()
             --log.Debug("Language %s CAPPED (id %d)", mq.TLO.Me.Language(i)(), i)
         elseif mq.TLO.Me.LanguageSkill(i)() == 0 then
             bci:ColorWrap(s, 'Red')
-            s = s .. bci:ColorWrap(string.format("%d:%s (0)", i, mq.TLO.Me.Language(i)()), 'Red')..', '
+            s = s .. bci:ColorWrap(string.format("%d:%s (0)\n", i, mq.TLO.Me.Language(i)()), 'Red')..', '
         else
-            s = s .. bci:ColorWrap(string.format("%d:%s (%d)", i, mq.TLO.Me.Language(i)(), mq.TLO.Me.LanguageSkill(i)()), "Yellow")..', '
+            s = s .. bci:ColorWrap(string.format("%d:%s (%d)\n", i, mq.TLO.Me.Language(i)(), mq.TLO.Me.LanguageSkill(i)()), "Yellow")..', '
         end
     end
 
@@ -36,7 +37,7 @@ local function create(commandQueue)
         commandQueue.Enqueue(function() execute() end)
     end
 
-    mq.bind("/fml", createCommand)
+    binder.Bind("/fml", createCommand, "Tells all bots to report their missing languages.")
 end
 
 return create

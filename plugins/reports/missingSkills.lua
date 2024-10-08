@@ -3,6 +3,7 @@ local logger = require('knightlinc/Write')
 local broadcast = require('broadcast/broadcast')
 local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
+local binder = require('application/binder')
 
 local bci = broadCastInterfaceFactory()
 
@@ -226,7 +227,7 @@ local function create(commandQueue)
         commandQueue.Enqueue(function() execute() end)
     end
 
-    mq.bind("/fmskills", createCommand)
+    binder.Bind("/fmskills", createCommand, "Tells all bots to report their missing skills.")
 end
 
 return create
