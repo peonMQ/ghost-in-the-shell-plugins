@@ -5,7 +5,7 @@ local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
 local binder = require('application/binder')
 
-local bci = broadCastInterfaceFactory()
+local bci = broadCastInterfaceFactory('ACTOR')
 
 local classSkills = {
     ROG = {
