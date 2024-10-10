@@ -109,16 +109,19 @@ local function execute(trader, msg)
     local tradespawn = mq.TLO.Spawn("pc ="..trader)
     local item = getItemLink(msg)
     if mq.TLO.Window("tradewnd").Open() == true and not mq.TLO.Cursor() then
-        if not tradespawn() or tradespawn.Guild() ~= mq.TLO.Me.Guild() then
-            broadcast.WarnAll("Ignoring trades from unknown player %s", trader)
-            mq.cmd("/squelch /notify tradewnd TRDW_Cancel_Button leftmouseup")
-        elseif item and not canAcceptItems() then
+        if item and not canAcceptItems() then
             broadcast.WarnAll("Unable to accept trade from player %s for item %s", trader, item.itemName)
             mq.cmd("/squelch /notify tradewnd TRDW_Cancel_Button leftmouseup")
+        elseif not tradespawn() or tradespawn.Guild() ~= mq.TLO.Me.Guild() then
+            mq.delay(5000, function() return not mq.TLO.Window("tradewnd").Open() end)
+            if mq.TLO.Window("tradewnd") then
+                broadcast.WarnAll("Ignoring trades from unknown player %s", trader)
+                mq.cmd("/squelch /notify tradewnd TRDW_Cancel_Button leftmouseup")
+            end
         else
             if assist.IsOrchestrator() then
                 broadcast.SuccessAll("Accepting trade in 5s with %s", trader)
-                mq.delay(5000, function() return not mq.TLO.Window("tradewnd") end)
+                mq.delay(5000, function() return not mq.TLO.Window("tradewnd").Open() end)
             end
 
             mq.cmd("/squelch /notify tradewnd TRDW_Trade_Button leftmouseup")
