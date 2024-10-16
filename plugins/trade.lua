@@ -4,62 +4,15 @@ local mqUtils = require('utils/mqhelpers')
 local logger = require('knightlinc/Write')
 local assist = require('core/assist')
 
--- ---@param item ItemLinkInfo
--- ---@return boolean
--- local function alreadyHaveLoreItem(item)
---     local existingItem = mq.TLO.FindItem(item.itemID)
---     if existingItem() then
---         return existingItem.Lore()
---     end
-
---     existingItem = mq.TLO.FindItemBank(item.itemID)
---     if existingItem() then
---         return existingItem.Lore()
---     end
-
---     return false
---   end
-
--- ---@param item ItemLinkInfo
--- ---@return boolean
--- local function canAcceptItem(item)
-
---     for i = 3008, 3015, 1 do
---         local invSlotItem = mq.TLO.InvSlot(i).Item
---         if invSlotItem() then
---         end
---     end
-
---     if alreadyHaveLoreItem(item) then
---         logger.Debug("<%s> is [Lore] and I already have one.", item.itemName)
---         mq.cmd("/beep")
---         return false
---     end
-
---     local existingItem = mq.TLO.FindItem(item.itemID)
---     if existingItem() and mq.TLO.Me.FreeInventory(existingItem.Size())() < 1 then
---       if existingItem.Stackable() and existingItem.FreeStack() > 0 then
---         return true
---       end
-
---       logger.Debug("My inventory is full!", item.itemName)
---       mq.cmd("/beep")
---       return false
---     end
-
---     return mq.TLO.Me.FreeInventory() > 0
--- end
-
-
 local function alreadyHaveLoreItem(item)
     if not item.Lore() then
       return false
     end
-  
+
     local findQuery = "="..item.Name()
     return mq.TLO.FindItemCount(findQuery)() > 0 or mq.TLO.FindItemBankCount(findQuery)() > 0
 end
-  
+
 ---@param item item
 ---@return boolean
 local function canAcceptItem(item)

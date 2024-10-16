@@ -1,0 +1,30 @@
+{
+  "editor.bracketPairColorization.enabled": true,
+  "files.exclude": {
+  },
+  "workbench.colorCustomizations": {
+      "editorBracketHighlight.foreground1": "#5caeef",
+      "editorBracketHighlight.foreground2": "#dfb976",
+      "editorBracketHighlight.foreground3": "#c172d9",
+      "editorBracketHighlight.foreground4": "#4fb1bc",
+      "editorBracketHighlight.foreground5": "#97c26c",
+      "editorBracketHighlight.foreground6": "#abb2c0",
+      "editorBracketHighlight.unexpectedBracket.foreground": "#db6165"
+  },
+  "editor.detectIndentation": true,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "Lua.runtime.version": "LuaJIT",
+  "Lua.workspace.library": [
+    "../ghost-in-the-shell",
+    "C:/Games/MacroQuest_v0.0.36-emu/lua/mq",
+    "c:\\Users\\asp\\AppData\\Roaming\\Code\\User\\globalStorage\\zenithcodeforge.mq-defs\\file-downloader-downloads\\macroquest\\mq-definitions-master",
+    "c:\\Users\\asp\\AppData\\Roaming\\Code\\User\\globalStorage\\zenithcodeforge.mq-defs\\file-downloader-downloads\\macroquest-plugins\\mq-plugin-definitions-main"
+  ],
+  "mq-defs.etag": "W/\"2a7174b048fc319ca4a5e31499f0d887fb0a772b97150029ad0684b44c5da70f\"",
+  "Lua.diagnostics.groupFileStatus": {
+    "type-check": "Any"
+  },
+  "mq-defs.plugins.etag": "W/\"b1c6913cbbe81aa74cf2504de18ae4592b2aac5f252bb52105b6d6c3f8980e46\"",
+  "editor.formatOnSave": true
+}

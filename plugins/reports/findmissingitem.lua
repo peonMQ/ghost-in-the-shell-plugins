@@ -1,7 +1,10 @@
 local mq = require('mq')
 local logger = require('knightlinc/Write')
 local broadcast = require('broadcast/broadcast')
+local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
+local assist = require('core/assist')
 local binder = require('application/binder')
+local bci = broadCastInterfaceFactory('ACTOR')
 
 local maxInventorySlots = 22 + mq.TLO.Me.NumBagSlots()
 local maxBankSlots = mq.TLO.Inventory.Bank.BagSlots()
@@ -42,7 +45,7 @@ end
 ---@return boolean
 local function findItemInContainer(container, matchFunction)
   logger.Debug("findItemInContainer <%s> <%s>", container.Name(), container.Container())
-  for i=1,container.Container() do
+  for i = 1, container.Container() do
     local item = container.Item(i)
     if matchFunction(item) then
       return true
@@ -57,15 +60,15 @@ end
 local function findItemInInventory(matchFunction)
   logger.Debug("Seaching inventory")
   local inventory = mq.TLO.Me.Inventory
-  for i=1, maxInventorySlots do
+  for i = 1, maxInventorySlots do
     local item = inventory(i) --[[@as item]]
     if matchFunction(item) then
       return true
     end
 
     if item.Container() and item.Container() > 0 then
-      if(findItemInContainer(item, matchFunction)) then
-          return true
+      if (findItemInContainer(item, matchFunction)) then
+        return true
       end
     end
   end
@@ -78,15 +81,15 @@ end
 local function findItemInBank(matchFunction)
   logger.Debug("Seaching bank")
   local bank = mq.TLO.Me.Bank
-  for i=1, maxBankSlots do
+  for i = 1, maxBankSlots do
     local item = bank(i) --[[@as item]]
     if matchFunction(item) then
       return true
     end
 
     if item.Container() and item.Container() > 0 then
-      if(findItemInContainer(item, matchFunction)) then
-          return true
+      if (findItemInContainer(item, matchFunction)) then
+        return true
       end
     end
   end
@@ -119,6 +122,10 @@ end
 local function create(commandQueue)
   logger.Info("Creating bind for '/fmi'.")
   local function createCommand(query)
+    if assist.IsOrchestrator() then
+      bci.ExecuteAllCommand("/fmi " .. query)
+    end
+
     local itemId = tonumber(query)
     if itemId then
       commandQueue.Enqueue(function() executeById(tonumber(itemId)) end)
@@ -127,7 +134,7 @@ local function create(commandQueue)
     end
   end
 
-   binder.Bind("/fmi", createCommand, "Tells all bots to report missing item for given id or name.", 'id|name')
+  binder.Bind("/fmi", createCommand, "Tells all bots to report missing item for given id or name.", 'id|name')
 end
 
 return create
