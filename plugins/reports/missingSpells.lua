@@ -2550,7 +2550,7 @@ end
 
 -- Reports missing spells/discs
 ---@param onlyExpac string
-local function execute(onlyExpac)
+local function executeByExpansion(onlyExpac)
   local class = mq.TLO.Me.Class.ShortName()
   local spells = classSpells[class]
   if spells == nil then
@@ -2595,14 +2595,50 @@ local function execute(onlyExpac)
   end
 end
 
-local function create(commandQueue)
-  ---@param onlyExpac string
-  local function createCommand(onlyExpac)
-    if assist.IsOrchestrator() then
-      bci.ExecuteAllCommand("/fmspells")
-    end
+local function executeBySpellId(spellId)
+  local spell = mq.TLO.Spell(spellId)
+  if not spell() then
+    logger.Debug("Spell not found %s", spellId)
+    return
+  end
 
-    commandQueue.Enqueue(function() execute(onlyExpac) end)
+  if spell.Level() > mq.TLO.Me.Level() then
+    logger.Debug("%s outside my level %s/%s", spell.RankName(), spell.Level(), mq.TLO.Me.Level())
+    return
+  end
+
+  local foundSpell = false;
+  -- scan spell book and look for any unknown spells according to the above tables.
+  local bookSize = 8 * 90 -- size of spellbook: 8 * 90 pages (RoF2)
+  for i = 1, bookSize do
+    local bookSpell = mq.TLO.Me.Book(i)
+    if bookSpell() ~= nil then
+      if bookSpell.ID() == spellId then
+        logger.Info("Found spells %s", spell.RankName())
+        foundSpell = true
+      end
+    end
+  end
+
+  if not foundSpell then
+    broadcast.WarnAll("Missing L%d \ay%s\ax", spell.Level(), spell.RankName())
+  end
+end
+
+local function create(commandQueue)
+  ---@param onlyExpacOrSpellId string|number
+  local function createCommand(onlyExpacOrSpellId)
+    if assist.IsOrchestrator() then
+      bci.ExecuteAllCommand("/fmspells " .. onlyExpacOrSpellId)
+    else
+      local spellId = tonumber(onlyExpacOrSpellId)
+      if spellId then
+        commandQueue.Enqueue(function() executeBySpellId(spellId) end)
+      else
+        local onlyExpac = onlyExpacOrSpellId --[[@as string]]
+        commandQueue.Enqueue(function() executeByExpansion(onlyExpac) end)
+      end
+    end
   end
 
   binder.Bind("/fmspells", createCommand,
