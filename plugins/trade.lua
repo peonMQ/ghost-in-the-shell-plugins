@@ -4,12 +4,14 @@ local mqUtils = require('utils/mqhelpers')
 local logger = require('knightlinc/Write')
 local assist = require('core/assist')
 
+---@param item item
 local function alreadyHaveLoreItem(item)
   if not item.Lore() then
     return false
   end
 
-  return mq.TLO.FindItem(item.itemID)() or mq.TLO.FindItemBank(item.itemID)()
+  local findQuery = item.ID()
+  return mq.TLO.FindItemCount(findQuery)() > 0 or mq.TLO.FindItemBankCount(findQuery)() > 0
 end
 
 ---@param item item
@@ -61,15 +63,15 @@ local function execute(trader, msg)
   local tradespawn = mq.TLO.Spawn("pc =" .. trader)
   local item = getItemLink(msg)
   if mq.TLO.Window("tradewnd").Open() == true and not mq.TLO.Cursor() then
-    if item and not canAcceptItems() then
-      broadcast.WarnAll("Unable to accept trade from player %s for item %s", trader, item.itemName)
-      mq.cmd("/squelch /notify tradewnd TRDW_Cancel_Button leftmouseup")
-    elseif not tradespawn() or tradespawn.Guild() ~= mq.TLO.Me.Guild() then
+    if not tradespawn() or (not tradespawn.GM() and tradespawn.Guild() ~= mq.TLO.Me.Guild()) then
       mq.delay(5000, function() return not mq.TLO.Window("tradewnd").Open() end)
       if mq.TLO.Window("tradewnd") then
         broadcast.WarnAll("Ignoring trades from unknown player %s", trader)
         mq.cmd("/squelch /notify tradewnd TRDW_Cancel_Button leftmouseup")
       end
+    elseif item and not canAcceptItems() then
+      broadcast.WarnAll("Unable to accept trade from player %s for item %s", trader, item.itemName)
+      mq.cmd("/squelch /notify tradewnd TRDW_Cancel_Button leftmouseup")
     else
       if assist.IsOrchestrator() then
         broadcast.SuccessAll("Accepting trade in 5s with %s", trader)
