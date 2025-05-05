@@ -2,6 +2,7 @@ local mq             = require('mq')
 local logger         = require('knightlinc/Write')
 local mqUtils        = require('utils/mqhelpers')
 local binder         = require('application/binder')
+local plugins        = require('utils/plugins')
 
 local foodItemClicky = "Endless Turkeys"
 local foodItem       = "Cooked Turkey"
@@ -18,6 +19,10 @@ local function DoSummon(itemName)
 end
 
 local function execute()
+  local isBardSwapping = plugins.IsLoaded("MQ2BardSwap") and mq.TLO.BardSwap.Swapping()
+  if isBardSwapping then
+    mq.cmd("/bardswap")
+  end
   logger.Info('Start [SummonFood] ==> %s of %s.', maxFoodCount, foodItem)
 
   if mq.TLO.FindItemCount('=' .. foodItemClicky)() < 1 then
@@ -26,10 +31,11 @@ local function execute()
 
   mqUtils.ClearCursor()
   while mq.TLO.FindItemCount('=' .. foodItem)() < maxFoodCount do
-    if mq.TLO.FindItem('=' .. foodItemClicky).TimerReady() == 0 then
+    local clicky = mq.TLO.FindItem('=' .. foodItemClicky)
+    if clicky() and clicky.TimerReady() == 0 then
       logger.Info('Summoning: %s =>  %s/%s', foodItem, mq.TLO.FindItemCount('=' .. foodItem)() + 1, maxFoodCount)
       DoSummon(foodItemClicky)
-      mq.delay(mq.TLO.FindItem('=' .. foodItemClicky).TimerReady() + 500)
+      mq.delay(clicky.TimerReady() + 500)
     end
 
     mqUtils.ClearCursor()
@@ -37,6 +43,9 @@ local function execute()
 
   mq.cmd('/beep .\\sounds\\mail1.wav')
   logger.Info("End [SummonFood]")
+  if isBardSwapping then
+    mq.cmd("/bardswap")
+  end
 end
 
 local function create(commandQueue)
@@ -45,7 +54,7 @@ local function create(commandQueue)
     commandQueue.Enqueue(function() execute() end)
   end
 
-  mq.bind("/food", createCommand)
+  binder.Bind("/food", createCommand, "Tells all bot to use click item to summon food.")
 end
 
 return create
