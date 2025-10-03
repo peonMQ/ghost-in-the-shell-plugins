@@ -29,7 +29,7 @@ local function execute(new_mt_order_str)
   local current_bots = bci.ConnectedClients()
   local new_mt_order = {}
   for _, maintank in ipairs(mt_order) do
-    if luaUtils.ContainsValue(current_bots, maintank) then
+    if luaUtils.ContainsValue(current_bots, maintank:lower()) then
       table.insert(new_mt_order, maintank)
     end
   end
