@@ -56,9 +56,6 @@ local function execute()
     mqUtils.ClearCursor()
   end
 
-  -- local clickyItem = item:new(mageEpicItem)
-  -- clickyItem:Cast()
-
   logger.Info("End [Mage Epic]")
 end
 
