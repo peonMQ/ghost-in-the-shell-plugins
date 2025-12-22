@@ -1,10 +1,56 @@
 local mq = require("mq")
+local Utils = require('mq/Utils')
 local logger = require('knightlinc/Write')
 local broadcast = require('broadcast/broadcast')
 local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
 local binder = require('application/binder')
 local bci = broadCastInterfaceFactory('ACTOR')
+
+local sqlite3 = Utils.Library.Include('lsqlite3')
+
+local bankHasSpell = function(spellName)
+  return false;
+end
+
+if sqlite3 then
+  local configDir = (mq.configDir .. "/"):gsub("\\", "/"):gsub("%s+", "%%20")
+  local serverName = mq.TLO.MacroQuest.Server()
+  local dbFileName = configDir .. serverName .. "/data/inventory.db"
+  local connectingString = string.format("file:///%s?cache=shared&mode=rwc&_journal_mode=WAL", dbFileName)
+  local db = sqlite3.open(connectingString, sqlite3.OPEN_READWRITE + sqlite3.OPEN_CREATE + sqlite3.OPEN_URI)
+
+  local findStmt = assert(
+    db:prepare([[
+      SELECT * FROM inventory WHERE item_name = ?
+    ]]),
+    db:errmsg()
+  )
+
+  bankHasSpell = function(spellName)
+    while true do
+      findStmt:reset()
+      findStmt:bind_values("Spell: " .. spellName)
+      local rc = findStmt:step()
+      if rc == sqlite3.ROW then
+        -- At least one row returned
+        return true
+      end
+
+      if rc == sqlite3.DONE then
+        -- No rows returned
+        return false
+      end
+
+      if rc == sqlite3.BUSY or rc == sqlite3.LOCKED then
+        mq.delay(5) -- short backoff
+      else
+        logger.Error("SELECT failed (%s): %s", tostring(rc), db:errmsg())
+        return false
+      end
+    end
+  end
+end
 
 local classSpells = {
   WAR = {
@@ -2515,7 +2561,10 @@ local function reportSpellStatus(expac, spell)
         logger.Error("%s: ERROR: No Level data for [+y+]%s[+x+]", expac, spell)
       end
     elseif spellData.Level() <= mq.TLO.Me.Level() then
-      broadcast.WarnAll("%s: Missing L%d \ay%s\ax", expac, spellData.Level(), spell)
+      broadcast.WarnAll("%s: Missing L%d \ay%s\ax"
+      , expac
+      , spellData.Level()
+      , broadcast.ColorWrap(spell, bankHasSpell(spell) and 'Green' or 'Yellow'))
     end
   end
 end
@@ -2626,16 +2675,28 @@ local function executeBySpellId(spellId)
 end
 
 local function create(commandQueue)
-  ---@param onlyExpacOrSpellId string|number
-  local function createCommand(onlyExpacOrSpellId)
+  ---@param onlyExpactOrSpellId string|number
+  local function createCommand(onlyExpactOrSpellId)
     if assist.IsOrchestrator() then
-      bci.ExecuteAllCommand("/fmspells " .. onlyExpacOrSpellId)
-    else
-      local spellId = tonumber(onlyExpacOrSpellId)
+      if (onlyExpactOrSpellId) then
+        bci.ExecuteAllCommand("/fmspells " .. onlyExpactOrSpellId)
+      else
+        bci.ExecuteAllCommand("/fmspells ")
+      end
+
+      local spellId = tonumber(onlyExpactOrSpellId)
       if spellId then
         commandQueue.Enqueue(function() executeBySpellId(spellId) end)
       else
-        local onlyExpac = onlyExpacOrSpellId --[[@as string]]
+        local onlyExpac = onlyExpactOrSpellId --[[@as string]]
+        commandQueue.Enqueue(function() executeByExpansion(onlyExpac) end)
+      end
+    else
+      local spellId = tonumber(onlyExpactOrSpellId)
+      if spellId then
+        commandQueue.Enqueue(function() executeBySpellId(spellId) end)
+      else
+        local onlyExpac = onlyExpactOrSpellId --[[@as string]]
         commandQueue.Enqueue(function() executeByExpansion(onlyExpac) end)
       end
     end
