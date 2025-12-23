@@ -26,7 +26,7 @@ local function create(commandQueue)
     commandQueue.Enqueue(function() execute() end)
   end
 
-  mq.event('joingroup', '#1# invites you to join a raid.#*#', createCommand)
+  mq.event('joingroup', '#1# invites you to join a group.#*#', createCommand)
 end
 
 return create
