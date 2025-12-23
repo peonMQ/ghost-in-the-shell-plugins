@@ -16,9 +16,9 @@ end
 local function create(commandQueue)
   logger.Info("Creating event for 'joingroup'.")
   local function createCommand(text, sender)
-    logger.Debug("Got group invite from %s", sender)
+    logger.Warn("Got group invite from %s", sender)
     local inviter = mq.TLO.Spawn("pc =" .. sender)
-    if not inviter() or inviter.Guild() ~= mq.TLO.Me.Guild() or not allowedInviters[sender] then
+    if not inviter() or (inviter.Guild() ~= mq.TLO.Me.Guild() and not allowedInviters[sender]) then
       logger.Error("Ignoring group invite from unknown player %s", sender)
       return
     end
