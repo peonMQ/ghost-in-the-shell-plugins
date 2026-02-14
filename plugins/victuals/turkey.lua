@@ -10,7 +10,7 @@ local maxFoodCount   = 5
 
 local function DoSummon(itemName)
   mq.cmdf('/nomodkey /itemnotify "%s" rightmouseup', itemName)
-  mq.delay("3s", function() return mq.TLO.Cursor.ID() and mq.TLO.Cursor.ID() > 0 end)
+  mq.delay("3s", function() return mq.TLO.Cursor.ID() ~= nil and mq.TLO.Cursor.ID() > 0 end)
   if mq.TLO.Cursor.ID() then
     mq.delay(500)
     mq.cmd('/autoinventory')
