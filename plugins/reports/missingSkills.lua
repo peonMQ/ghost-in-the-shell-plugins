@@ -5,7 +5,7 @@ local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
 local binder = require('application/binder')
 
-local bci = broadCastInterfaceFactory('ACTOR')
+local bci = broadCastInterfaceFactory('REMOTE')
 
 local classSkills = {
     ROG = {
@@ -20,10 +20,10 @@ local classSkills = {
         "Backstab",
         "Parry",
         "Dual Wield",
-        "Double Attack",            -- L16
-        "Instill Doubt",            -- L22
-        "Disarm",                   -- L27
-        "Riposte",                  -- L30
+        "Double Attack", -- L16
+        "Instill Doubt", -- L22
+        "Disarm",        -- L27
+        "Riposte",       -- L30
     },
     MNK = {
         "Dodge",
@@ -39,19 +39,19 @@ local classSkills = {
         "Double Attack",
         "Feign Death",
         "Intimidation",
-        "Eagle Strike",             -- L20
-        "Dragon Punch",             -- L25, shows as Tail Rake for Iksars
-        "Disarm",                   -- L27
-        "Flying Kick",              -- L30
-        "Riposte",                  -- L35
+        "Eagle Strike", -- L20
+        "Dragon Punch", -- L25, shows as Tail Rake for Iksars
+        "Disarm",       -- L27
+        "Flying Kick",  -- L30
+        "Riposte",      -- L35
     },
     BRD = {
         "Singing",
-        "Percussion Instruments",   -- L05
-        "Stringed Instruments",     -- L08
-        "Brass Instruments",        -- L11
-        "Wind Instruments",         -- L14
-        "Meditate",                 -- L10
+        "Percussion Instruments", -- L05
+        "Stringed Instruments",   -- L08
+        "Brass Instruments",      -- L11
+        "Wind Instruments",       -- L14
+        "Meditate",               -- L10
         "Dodge",
         "Dual Wield",
         "Intimidation",
@@ -66,108 +66,108 @@ local classSkills = {
         "Pick Lock",
     },
     PAL = {
-        "Taunt",                    -- L01
-        "Bash",                     -- L06
-        "Dodge",                    -- L10
-        "Meditate",                 -- L12
-        "Parry",                    -- L17
-        "Double Attack",            -- L20
-        "Specialize Alteration",    -- L30
-        "Riposte",                  -- L30
-        "Disarm",                   -- L40
+        "Taunt",                 -- L01
+        "Bash",                  -- L06
+        "Dodge",                 -- L10
+        "Meditate",              -- L12
+        "Parry",                 -- L17
+        "Double Attack",         -- L20
+        "Specialize Alteration", -- L30
+        "Riposte",               -- L30
+        "Disarm",                -- L40
     },
     SHD = {
-        "Taunt",                    -- L01
-        "Bash",                     -- L06
-        "Meditate",                 -- L08
-        "Dodge",                    -- L15
-        "Parry",                    -- L17
-        "Double Attack",            -- L20
-        "Specialize Alteration",    -- L30
-        "Riposte",                  -- L30
-        "Disarm",                   -- L40
+        "Taunt",                 -- L01
+        "Bash",                  -- L06
+        "Meditate",              -- L08
+        "Dodge",                 -- L15
+        "Parry",                 -- L17
+        "Double Attack",         -- L20
+        "Specialize Alteration", -- L30
+        "Riposte",               -- L30
+        "Disarm",                -- L40
     },
     RNG = {
-        "Taunt",                    -- L01
-        "Kick",                     -- L05
-        "Dodge",                    -- L08
-        "Meditate",                 -- L12
-        "Dual Wield",               -- L17
-        "Parry",                    -- L18
-        "Double Attack",            -- L20
-        "Specialize Alteration",    -- L30
-        "Disarm",                   -- L35
-        "Riposte",                  -- L35
-        "Tracking",                 -- L01
-        "Forage",                   -- L03
-        "Sneak",                    -- L10
-        "Hide",                     -- L25
+        "Taunt",                 -- L01
+        "Kick",                  -- L05
+        "Dodge",                 -- L08
+        "Meditate",              -- L12
+        "Dual Wield",            -- L17
+        "Parry",                 -- L18
+        "Double Attack",         -- L20
+        "Specialize Alteration", -- L30
+        "Disarm",                -- L35
+        "Riposte",               -- L35
+        "Tracking",              -- L01
+        "Forage",                -- L03
+        "Sneak",                 -- L10
+        "Hide",                  -- L25
     },
     WAR = {
-        "Kick",                     -- L01
-        "Slam",                     -- L01
-        "Taunt",                    -- L01
-        "Bash",                     -- L06
-        "Dodge",                    -- L06
-        "Parry",                    -- L10
-        "Dual Wield",               -- L13
-        "Double Attack",            -- L15
-        "Riposte",                  -- L25
-        "Disarm",                   -- L35
+        "Kick",          -- L01
+        "Slam",          -- L01
+        "Taunt",         -- L01
+        "Bash",          -- L06
+        "Dodge",         -- L06
+        "Parry",         -- L10
+        "Dual Wield",    -- L13
+        "Double Attack", -- L15
+        "Riposte",       -- L25
+        "Disarm",        -- L35
     },
     CLR = {
-        "Meditate",                 -- L08
-        "Dodge",                    -- L15
-        "Specialize Alteration",    -- L30
+        "Meditate",              -- L08
+        "Dodge",                 -- L15
+        "Specialize Alteration", -- L30
     },
     DRU = {
-        "Forage",                   -- L05
-        "Meditate",                 -- L08
-        "Dodge",                    -- L15
-        "Tracking",                 -- L20
-        "Specialize Alteration",    -- L30
+        "Forage",                -- L05
+        "Meditate",              -- L08
+        "Dodge",                 -- L15
+        "Tracking",              -- L20
+        "Specialize Alteration", -- L30
     },
     SHM = {
-        "Meditate",                 -- L08
-        "Dodge",                    -- L15
-        "Specialize Alteration",    -- L30
+        "Meditate",              -- L08
+        "Dodge",                 -- L15
+        "Specialize Alteration", -- L30
     },
     WIZ = {
-        "Meditate",                 -- L08
-        "Dodge",                    -- L15
-        "Specialize Evocation",    -- L20
+        "Meditate",             -- L08
+        "Dodge",                -- L15
+        "Specialize Evocation", -- L20
     },
     MAG = {
-        "Meditate",                 -- L08
-        "Dodge",                    -- L22
-        "Specialize Evocation",    -- L20
+        "Meditate",             -- L08
+        "Dodge",                -- L22
+        "Specialize Evocation", -- L20
     },
     ENC = {
-        "Meditate",                 -- L08
-        "Dodge",                    -- L15
-        "Specialize Alteration",    -- L20
+        "Meditate",              -- L08
+        "Dodge",                 -- L15
+        "Specialize Alteration", -- L20
     },
     NEC = {
-        "Meditate",                 -- L08
-        "Dodge",                    -- L15
-        "Specialize Alteration",    -- L20
+        "Meditate",              -- L08
+        "Dodge",                 -- L15
+        "Specialize Alteration", -- L20
     },
     BST = {
-        "Kick",                     -- L05
-        "Dodge",                    -- L10
-        "Meditate",                 -- L12
-        "Dual Wield",               -- L17
-        "Block",                    -- L25
-        "Riposte",                  -- L40
+        "Kick",       -- L05
+        "Dodge",      -- L10
+        "Meditate",   -- L12
+        "Dual Wield", -- L17
+        "Block",      -- L25
+        "Riposte",    -- L40
     },
     BER = {
-        "Kick",                     -- L01
-        "Frenzy",                   -- L06
-        "Dodge",                    -- L10
-        "Parry",                    -- L10
-        "Double Attack",            -- L15
-        "Riposte",                  -- L25
-        "Disarm",                   -- L35
+        "Kick",          -- L01
+        "Frenzy",        -- L06
+        "Dodge",         -- L10
+        "Parry",         -- L10
+        "Double Attack", -- L15
+        "Riposte",       -- L25
+        "Disarm",        -- L35
     },
 }
 

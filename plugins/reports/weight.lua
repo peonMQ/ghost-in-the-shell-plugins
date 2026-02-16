@@ -4,18 +4,21 @@ local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
 local binder = require('application/binder')
 
-local bci = broadCastInterfaceFactory('ACTOR')
+local bci = broadCastInterfaceFactory('REMOTE')
 
 -- report language skills
 local function execute()
     local currentStrenght = mq.TLO.Me.STR()
     local currentWeight = mq.TLO.Me.CurrentWeight()
-    if currentWeight > currentStrenght then -- red
-        broadcast.ErrorAll("Weight %s/%s", broadcast.ColorWrap(currentWeight, 'Red'), broadcast.ColorWrap(currentStrenght, 'Red'))
+    if currentWeight > currentStrenght then          -- red
+        broadcast.ErrorAll("Weight %s/%s", broadcast.ColorWrap(currentWeight, 'Red'),
+            broadcast.ColorWrap(currentStrenght, 'Red'))
     elseif currentWeight + 20 > currentStrenght then -- yellow
-        broadcast.WarnAll("Weight %s/%s", broadcast.ColorWrap(currentWeight, 'Orange'), broadcast.ColorWrap(currentStrenght, 'Yellow'))
-    else -- green
-        broadcast.SuccessAll("Weight %s/%s", broadcast.ColorWrap(currentWeight, 'Green'), broadcast.ColorWrap(currentStrenght, 'Green'))
+        broadcast.WarnAll("Weight %s/%s", broadcast.ColorWrap(currentWeight, 'Orange'),
+            broadcast.ColorWrap(currentStrenght, 'Yellow'))
+    else                                             -- green
+        broadcast.SuccessAll("Weight %s/%s", broadcast.ColorWrap(currentWeight, 'Green'),
+            broadcast.ColorWrap(currentStrenght, 'Green'))
     end
 end
 

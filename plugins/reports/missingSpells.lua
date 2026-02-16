@@ -5,7 +5,7 @@ local broadcast = require('broadcast/broadcast')
 local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
 local binder = require('application/binder')
-local bci = broadCastInterfaceFactory('ACTOR')
+local bci = broadCastInterfaceFactory('REMOTE')
 
 local sqlite3 = Utils.Library.Include('lsqlite3')
 

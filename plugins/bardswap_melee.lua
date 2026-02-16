@@ -5,7 +5,7 @@ local plugins = require('utils/plugins')
 local assist = require('core/assist')
 local binder = require('application/binder')
 local strings = require('core/strings')
-local bci = broadCastInterfaceFactory('ACTOR')
+local bci = broadCastInterfaceFactory('REMOTE')
 
 ---@param enable boolean
 local function execute(enable)

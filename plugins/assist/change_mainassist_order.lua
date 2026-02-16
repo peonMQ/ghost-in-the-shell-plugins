@@ -5,7 +5,7 @@ local luaUtils = require('utils/lua-table')
 local assist = require('core/assist')
 local binder = require('application/binder')
 local settings = require('settings/settings')
-local bci = broadCastInterfaceFactory('ACTOR')
+local bci = broadCastInterfaceFactory('REMOTE')
 
 ---@param input string
 ---@param sep string

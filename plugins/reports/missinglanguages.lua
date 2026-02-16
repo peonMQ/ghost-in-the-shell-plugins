@@ -4,11 +4,11 @@ local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 local assist = require('core/assist')
 local binder = require('application/binder')
 
-local bci = broadCastInterfaceFactory('ACTOR')
+local bci = broadCastInterfaceFactory('REMOTE')
 
 local maxLanguageID = 25
 if mq.TLO.MacroQuest.Server() == "FVP" then
-  maxLanguageID = 24   -- 25 "Vah Shir" was added with Luclin
+  maxLanguageID = 24 -- 25 "Vah Shir" was added with Luclin
 end
 -- report language skills
 local function execute()
@@ -21,7 +21,8 @@ local function execute()
       s = s .. bci:ColorWrap(string.format("  %d:%s (0)\n", i, mq.TLO.Me.Language(i)()), 'Red')
     else
       s = s ..
-      bci:ColorWrap(string.format("  %d:%s (%d)\n", i, mq.TLO.Me.Language(i)(), mq.TLO.Me.LanguageSkill(i)()), "Yellow")
+          bci:ColorWrap(string.format("  %d:%s (%d)\n", i, mq.TLO.Me.Language(i)(), mq.TLO.Me.LanguageSkill(i)()),
+            "Yellow")
     end
   end
 

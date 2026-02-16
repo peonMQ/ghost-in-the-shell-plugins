@@ -3,7 +3,7 @@ local logger = require('knightlinc/Write')
 local broadCastInterfaceFactory = require("broadcast/broadcastinterface")
 local follow_state = require('application/follow_state')
 local binder = require('application/binder')
-local bci = broadCastInterfaceFactory('ACTOR')
+local bci = broadCastInterfaceFactory('REMOTE')
 
 -- form bots in a circle around orchestrator
 ---@param dist integer|nil Distance from the center

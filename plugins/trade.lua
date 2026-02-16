@@ -52,7 +52,7 @@ end
 local function getItemLink(msg)
   local links = mq.ExtractLinks(msg)
   local i, linkItem = next(links)
-  if i and linkItem.type == mq.LinkTypes.Item then
+  if i and linkItem and linkItem.type == mq.LinkTypes.Item then
     return mq.ParseItemLink(linkItem.link)
   end
 

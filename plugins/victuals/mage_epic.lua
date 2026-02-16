@@ -10,7 +10,7 @@ local assist                    = require('core/assist')
 
 local broadCastInterfaceFactory = require('broadcast/broadcastinterface')
 
-local bci                       = broadCastInterfaceFactory('ACTOR')
+local bci                       = broadCastInterfaceFactory('REMOTE')
 local mageEpicSpellName         = "Summon Orb"
 local mageEpicItem              = "Orb of Mastery"
 
@@ -52,7 +52,7 @@ local function execute()
       mq.delay(500, function() return mq.TLO.Me.SpellReady(mageEpicSpellName)() end)
     end
     mageEpicSpell:Cast()
-    mq.delay(1000, function() return mq.TLO.Cursor() end)
+    mq.delay(1000, function() return mq.TLO.Cursor() ~= nil end)
     mqUtils.ClearCursor()
   end
 
