@@ -1,4 +1,5 @@
 local mq = require("mq")
+local packageMan = require('mq/PackageMan')
 local Utils = require('mq/Utils')
 local logger = require('knightlinc/Write')
 local broadcast = require('broadcast/broadcast')
@@ -8,6 +9,7 @@ local binder = require('application/binder')
 local bci = broadCastInterfaceFactory('REMOTE')
 
 local sqlite3 = Utils.Library.Include('lsqlite3')
+local lfs = packageMan.Require('luafilesystem', 'lfs')
 
 local bankHasSpell = function(spellName)
   return false;
@@ -16,9 +18,28 @@ end
 if sqlite3 then
   local configDir = (mq.configDir .. "/"):gsub("\\", "/"):gsub("%s+", "%%20")
   local serverName = mq.TLO.MacroQuest.Server()
-  local dbFileName = configDir .. serverName .. "/data/inventory.db"
+  local dbFilePath = configDir .. serverName .. "/data"
+  local attr = lfs.attributes(dbFilePath)
+  if not attr then
+    local success, err = lfs.mkdir(dbFilePath)
+    if not success then
+      logger.Error("Failed to create directory <%s> (it might already exist or an error occurred).", dbFilePath)
+      return
+    end
+  elseif attr.mode ~= "directory" then
+    logger.Error("Path <%s> exists but is not a directory.", dbFilePath)
+    return
+  end
+
+  local dbFileName = dbFilePath .. "/inventory.db"
   local connectingString = string.format("file:///%s?cache=shared&mode=rwc&_journal_mode=WAL", dbFileName)
-  local db = sqlite3.open(connectingString, sqlite3.OPEN_READWRITE + sqlite3.OPEN_CREATE + sqlite3.OPEN_URI)
+  local db, error_code, error_message = sqlite3.open(connectingString,
+    sqlite3.OPEN_READWRITE + sqlite3.OPEN_CREATE + sqlite3.OPEN_URI)
+  if db == nil then
+    logger.Error("Error opening database %s with error code %s\n%s", connectingString, tostring(error_code),
+      error_message)
+    return
+  end
 
   local findStmt = assert(
     db:prepare([[
